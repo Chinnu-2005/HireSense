@@ -1,14 +1,13 @@
 package com.backend.controllers;
 
-import com.backend.entities.Job;
-import com.backend.entities.Recruiter;
-import com.backend.entities.Response;
+import com.backend.entities.*;
 import com.backend.repositories.ApplicationRepository;
 import com.backend.repositories.RecruiterRepository;
 import com.backend.services.RecruiterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Stream.builder;
@@ -26,16 +25,16 @@ public class RecruiterController {
     @Autowired
     private RecruiterService recruiterService;
 
-    @PostMapping("/create-profile")
-    public Response<Recruiter> createRecruiter(@RequestBody Recruiter recruiter) throws Exception {
-        Recruiter savedRecruiter = null;
-        try{
-            savedRecruiter=recruiterService.saveRecruiter(recruiter);
-        }catch(Exception e){
-            return Response.<Recruiter>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(savedRecruiter).build();
-        }
-        return Response.<Recruiter>builder().message("Recruiter profile created Successfully").statusCode(200).data(savedRecruiter).build();
-    }
+//    @PostMapping("/create-profile")
+//    public Response<Recruiter> createRecruiter(@RequestBody Recruiter recruiter) throws Exception {
+//        Recruiter savedRecruiter = null;
+//        try{
+//            savedRecruiter=recruiterService.saveRecruiter(recruiter);
+//        }catch(Exception e){
+//            return Response.<Recruiter>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(savedRecruiter).build();
+//        }
+//        return Response.<Recruiter>builder().message("Recruiter profile created Successfully").statusCode(200).data(savedRecruiter).build();
+//    }
 
 
     @PostMapping("/post-job")
@@ -50,11 +49,28 @@ public class RecruiterController {
     }
 
     @GetMapping("/get-jobs-posted/{recruiter_id}")
-    public Response<List<Job>> getJobsPosted(@PathVariable("recruiter_id") int recruiter_id){
-        Job jobs=null;
+    public Response<List<Job>> getJobsPosted(@PathVariable("recruiter_id") int recruiter_id) throws Exception {
+        List<Job> jobs=new ArrayList<>();
 
+        try {
+            jobs=recruiterService.getAllJobs(recruiter_id);
 
+        }catch(Exception e){
+            return Response.<List<Job>>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(jobs).build();
+        }
+        return Response.<List<Job>>builder().message("Jobs posted Successfully").statusCode(200).data(jobs).build();
 
+    }
+
+    @PatchMapping("/update-status/{application_id}")
+    public Response<Application> updateStatus(@PathVariable("application_id") int application_id, @RequestParam ApplicationStatus applicationStatus) throws Exception {
+        Application updatedApplication=null;
+        try{
+            updatedApplication=recruiterService.updateApplication(application_id,applicationStatus);
+        }catch(Exception e){
+            return Response.<Application>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(updatedApplication).build();
+        }
+        return Response.<Application>builder().message("Application updated successfully").statusCode(200).data(updatedApplication).build();
     }
 
 

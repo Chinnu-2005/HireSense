@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "application",uniqueConstraints = @UniqueConstraint(columnNames = {"candidate_id","column_id"}))
+@Table(name = "application",uniqueConstraints = @UniqueConstraint(columnNames = {"candidate_id","job_id"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

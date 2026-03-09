@@ -32,4 +32,8 @@ public class Candidate {
 
     @OneToMany(mappedBy = "candidate")
     private List<Application> applications;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
