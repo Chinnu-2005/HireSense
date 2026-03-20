@@ -12,6 +12,5 @@ public class CandidateRequest {
     private String name;
     private List<String> skills;
     private int experience;
-    private String resumeUrl;
 
 }
