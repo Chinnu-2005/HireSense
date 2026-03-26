@@ -11,6 +11,7 @@ import com.backend.repositories.CandidateRepository;
 import com.backend.repositories.RecruiterRepository;
 import com.backend.repositories.UserRepository;
 import com.backend.services.AuthService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,8 +32,10 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/register/candidate")
-    public Response<Candidate> registerCandidate(@RequestPart("candidate") CandidateRequest candidateRequest, @RequestPart("resume")MultipartFile resumeUrl) throws Exception {
+    @PostMapping(value = "/register/candidate", consumes = "multipart/form-data")
+    public Response<Candidate> registerCandidate(@RequestPart("candidate") String candidateJson, @RequestPart("resume") MultipartFile resumeUrl) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        CandidateRequest candidateRequest = mapper.readValue(candidateJson, CandidateRequest.class);
         if(candidateRepository.findByEmail(candidateRequest.getEmail())!=null){
             Candidate candicateInDb=candidateRepository.findByEmail(candidateRequest.getEmail());
             return Response.<Candidate>builder().message("Candicate with this email already exists").statusCode(400).data(candicateInDb).build();
@@ -44,7 +47,7 @@ public class AuthController {
 
     @PostMapping("/register/recruiter")
     public Response<Recruiter> registerRecruiter(@RequestBody RecruiterRequest recruiterRequest) {
-        if(candidateRepository.findByEmail(recruiterRequest.getEmail())!=null){
+        if(recruiterRepository.findByEmail(recruiterRequest.getEmail())!=null){
             Recruiter recruiterInDb=recruiterRepository.findByEmail(recruiterRequest.getEmail());
             return Response.<Recruiter>builder().message("Recruiter with this email exists").statusCode(400).data(recruiterInDb).build();
         }

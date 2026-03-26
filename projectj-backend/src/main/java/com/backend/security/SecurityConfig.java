@@ -32,8 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain springFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.disable())
-                .authorizeHttpRequests(((request)->request.requestMatchers("/auth/register/recruiter","/auth/register/candidate","/auth/login","/").permitAll().anyRequest().authenticated()))
-                .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(((request)->request.requestMatchers("/auth/**","/").permitAll().anyRequest().authenticated()))
                 .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
