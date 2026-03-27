@@ -1,5 +1,6 @@
 package com.backend.security;
 
+import com.backend.config.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -22,6 +24,9 @@ public class SecurityConfig {
 
     @Autowired
     private final MyUserDetailsService userDetailsService;
+
+    @Autowired
+    private JWTFilter jwtFilter;
 
 
     public SecurityConfig(MyUserDetailsService userDetailsService) {
@@ -33,7 +38,8 @@ public class SecurityConfig {
         http
                 .csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests(((request)->request.requestMatchers("/auth/**","/").permitAll().anyRequest().authenticated()))
-                .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

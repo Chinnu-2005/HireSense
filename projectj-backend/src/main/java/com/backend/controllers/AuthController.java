@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -56,13 +59,27 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Response<User> loginUser(@RequestBody UserRequest userRequest) {
-        String response= authService.login(userRequest);
-        if(response==null){
-            return Response.<User>builder().message("Login Failed").statusCode(400).data(null).build();
+    public Response<Map<String,Object>> loginUser(@RequestBody UserRequest userRequest) {
+        String token = authService.login(userRequest);
+        if(token == null){
+            return Response.<Map<String, Object>>builder()
+                    .message("Login Failed")
+                    .statusCode(400)
+                    .data(null)
+                    .build();
         }
-        User userInDb=userRepository.findByEmail(userRequest.getEmail());
-        return Response.<User>builder().message("Login Success").statusCode(200).data(userInDb).build();
+
+        User userInDb = userRepository.findByEmail(userRequest.getEmail());
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("token", token);
+        responseData.put("user", userInDb);
+
+        return Response.<Map<String, Object>>builder()
+                .message("Login Success")
+                .statusCode(200)
+                .data(responseData)
+                .build();
     }
 
 }

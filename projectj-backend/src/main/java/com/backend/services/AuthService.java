@@ -38,6 +38,9 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private JWTService jwtService;
+
+    @Autowired
     private Cloudinary cloudinary;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -96,7 +99,8 @@ public class AuthService {
                 )
         );
         if(authentication.isAuthenticated()) {
-            return "Success";
+
+            return jwtService.generateToken(userRequest.getEmail());
         }
         return null;
     }
