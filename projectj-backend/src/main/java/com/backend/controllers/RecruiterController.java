@@ -54,11 +54,14 @@ public class RecruiterController {
 
         try {
             jobs=recruiterService.getAllJobs(recruiter_id);
+            if(jobs.isEmpty()){
+                return Response.<List<Job>>builder().message("No jobs posted by this recruiter").statusCode(400).data(jobs).build();
+            }
 
         }catch(Exception e){
             return Response.<List<Job>>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(jobs).build();
         }
-        return Response.<List<Job>>builder().message("Jobs posted Successfully").statusCode(200).data(jobs).build();
+        return Response.<List<Job>>builder().message("Jobs retrived Successfully").statusCode(200).data(jobs).build();
 
     }
 

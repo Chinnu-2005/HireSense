@@ -1,6 +1,6 @@
 #root {
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 0;
   padding: 2rem;
   text-align: center;
 }
@@ -39,4 +39,14 @@
 
 .read-the-docs {
   color: #888;
+}
+
+
+.bg-myColor{
+  background: linear-gradient(to right, #000000, #BF953F, #FCF6BA, #AA771C);
+}
+
+.logo{
+  height: 100px;
+  width: 100px;
 }
