@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (path.startsWith("/auth/")) {
+        if (path.startsWith("/auth/") || path.startsWith("/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
             email=jwtService.extractUserName(token);
         }
 
-        if(email==null || SecurityContextHolder.getContext().getAuthentication()==null) {
+        if(email!=null || SecurityContextHolder.getContext().getAuthentication()==null) {
             UserDetails userDetails = applicationContext.getBean(MyUserDetailsService.class).loadUserByUsername(email);
 
             if (jwtService.validateToken(token, userDetails)) {
