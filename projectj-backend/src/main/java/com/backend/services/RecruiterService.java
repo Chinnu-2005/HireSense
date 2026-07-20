@@ -45,4 +45,8 @@ public class RecruiterService {
         return applicationRepository.save(application);
     }
 
+    public Recruiter getProfile(String email) {
+        return recruiterRepository.findByEmail(email);
+    }
+
 }

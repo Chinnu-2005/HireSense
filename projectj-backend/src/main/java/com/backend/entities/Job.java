@@ -1,5 +1,6 @@
 package com.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Job {
     private Recruiter recruiter;
 
     @OneToMany(mappedBy = "job")
+    @JsonIgnoreProperties("job")
     private List<Application> applications;
 
     private String role;

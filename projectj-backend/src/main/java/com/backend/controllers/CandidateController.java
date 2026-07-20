@@ -1,6 +1,7 @@
 package com.backend.controllers;
 
 import com.backend.entities.Application;
+import com.backend.entities.Candidate;
 import com.backend.entities.Job;
 import com.backend.entities.Response;
 import com.backend.repositories.CandidateRepository;
@@ -62,6 +63,16 @@ public class CandidateController {
             return Response.<List<Application>>builder().message("No Job Applications found").statusCode(400).data(null).build();
         }
         return Response.<List<Application>>builder().message("Job Applications found").statusCode(200).data(applications).build();
+    }
+
+    @GetMapping("/profile")
+    public Response<Candidate> getProfile() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        Candidate candidate = candidateService.getProfile(email);
+        if (candidate == null) {
+            return Response.<Candidate>builder().message("Profile not found").statusCode(400).data(null).build();
+        }
+        return Response.<Candidate>builder().message("Profile found").statusCode(200).data(candidate).build();
     }
 
 }

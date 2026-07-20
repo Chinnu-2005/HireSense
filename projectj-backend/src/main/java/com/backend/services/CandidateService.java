@@ -56,4 +56,8 @@ public class CandidateService {
         return applicationRepository.findByCandidateId(candidate_id);
     }
 
+    public Candidate getProfile(String email) {
+        return candidateRepository.findByEmail(email);
+    }
+
 }

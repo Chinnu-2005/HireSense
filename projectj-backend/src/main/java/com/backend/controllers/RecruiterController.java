@@ -25,6 +25,9 @@ public class RecruiterController {
     @Autowired
     private RecruiterService recruiterService;
 
+    @Autowired
+    private com.backend.services.EmailService emailService;
+
 //    @PostMapping("/create-profile")
 //    public Response<Recruiter> createRecruiter(@RequestBody Recruiter recruiter) throws Exception {
 //        Recruiter savedRecruiter = null;
@@ -41,6 +44,12 @@ public class RecruiterController {
     public Response<Job> postJob(@RequestBody Job job) throws Exception {
         Job savedJob=null;
         try{
+            String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+            Recruiter recruiter = recruiterService.getProfile(email);
+            if (recruiter == null) {
+                return Response.<Job>builder().message("Recruiter profile not found").statusCode(400).data(null).build();
+            }
+            job.setRecruiter(recruiter);
             savedJob=recruiterService.createJob(job);
         }catch(Exception e){
             return Response.<Job>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(savedJob).build();
@@ -70,12 +79,31 @@ public class RecruiterController {
         Application updatedApplication=null;
         try{
             updatedApplication=recruiterService.updateApplication(application_id,applicationStatus);
+            if (applicationStatus == ApplicationStatus.ACCEPTED && updatedApplication != null 
+                    && updatedApplication.getCandidate() != null && updatedApplication.getJob() != null) {
+                String candidateEmail = updatedApplication.getCandidate().getEmail();
+                String candidateName = updatedApplication.getCandidate().getName();
+                String jobRole = updatedApplication.getJob().getRole();
+                String companyName = (updatedApplication.getJob().getRecruiter() != null) 
+                        ? updatedApplication.getJob().getRecruiter().getCompanyName() 
+                        : "HireSense Partner";
+
+                emailService.sendConfirmationEmail(candidateEmail, candidateName, jobRole, companyName);
+            }
         }catch(Exception e){
             return Response.<Application>builder().message("Internal Server error" + e.getMessage()).statusCode(500).data(updatedApplication).build();
         }
         return Response.<Application>builder().message("Application updated successfully").statusCode(200).data(updatedApplication).build();
     }
 
-
+    @GetMapping("/profile")
+    public Response<Recruiter> getProfile() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        Recruiter recruiter = recruiterService.getProfile(email);
+        if (recruiter == null) {
+            return Response.<Recruiter>builder().message("Profile not found").statusCode(400).data(null).build();
+        }
+        return Response.<Recruiter>builder().message("Profile found").statusCode(200).data(recruiter).build();
+    }
 
 }

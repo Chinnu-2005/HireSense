@@ -1,23 +1,26 @@
-# Project-J - Job Application Platform
+# HireSense - Unified Full-Stack Job Application Platform
 
-A full-stack job application platform built with Spring Boot (Backend) and React (Frontend) that connects recruiters with candidates.
+HireSense (Project-J) is a premium full-stack job board platform built with Spring Boot (Backend) and React (Frontend) that connects recruiters with candidates. 
 
 ## 🏗️ Architecture
+
+This project is built using a **single-port unified full-stack architecture**. When you package the backend using Maven, it downloads node/npm, compiles the React frontend assets, and copies the static bundle to the backend's resource folder to serve both the client application and the REST API endpoints from a single server port (`3000`).
 
 ### Tech Stack
 
 **Backend:**
-- Java 21
+- Java 21 / 25
 - Spring Boot 3.2.3
 - Spring Security with JWT Authentication
-- Spring Data JPA
-- PostgreSQL (Neon Database)
-- Cloudinary (File Storage)
+- Spring Data JPA & PostgreSQL
+- Cloudinary (Resume Attachment Storage)
+- JavaMailSender (Shortlisting automated emails)
 - Maven
 
 **Frontend:**
-- React
-- Vite
+- React (Vite)
+- React Router DOM
+- Vanilla CSS (Tailwind-free premium themes)
 
 ## 📊 Database Schema
 
@@ -662,9 +665,9 @@ Set these environment variables instead of hardcoding in application.properties:
 ## 🚧 Future Enhancements
 
 - [ ] Refresh token implementation for extended sessions
-- [ ] Email notifications for application status updates
-- [ ] Advanced job search with filters (location, salary, skills)
-- [ ] Recruiter analytics dashboard
+- [x] Email notifications for application status updates (Shortlist confirmation emails)
+- [x] Advanced job search with filters (Instant client-side search by title or skills)
+- [x] Recruiter analytics dashboard (Detailed application counts: Total, Approved, Rejected)
 - [ ] Resume parsing and skill extraction
 - [ ] Interview scheduling system
 - [ ] Real-time notifications using WebSockets

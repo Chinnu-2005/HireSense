@@ -1,5 +1,6 @@
 package com.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,12 +25,14 @@ public class Application {
 
     @ManyToOne
     @JoinColumn(name = "candidate_id")
+    @JsonIgnoreProperties("applications")
     private Candidate candidate;
 
     private String resumeUrl;
 
     @ManyToOne
     @JoinColumn(name = "job_id")
+    @JsonIgnoreProperties("applications")
     private Job job;
 
     @CreationTimestamp

@@ -47,10 +47,19 @@ public class AuthService {
 
     public Candidate registerCandidate(CandidateRequest candidateRequest, MultipartFile resumeFile) throws Exception {
 
-        Map uploadResult=cloudinary.uploader().upload(
+        String originalFilename = resumeFile.getOriginalFilename();
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            originalFilename = "resume.pdf";
+        }
+        // Normalize filename to prevent special character issues in the URL
+        originalFilename = originalFilename.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+        String publicId = "resumes/" + System.currentTimeMillis() + "_" + originalFilename;
+
+        Map uploadResult = cloudinary.uploader().upload(
                 resumeFile.getBytes(),
                 ObjectUtils.asMap(
-                        "resource_type","raw"
+                        "resource_type", "auto",
+                        "public_id", publicId
                 )
         );
 
@@ -92,15 +101,18 @@ public class AuthService {
     }
 
     public String login(UserRequest userRequest){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userRequest.getEmail(),
-                        userRequest.getPassword()
-                )
-        );
-        if(authentication.isAuthenticated()) {
-
-            return jwtService.generateToken(userRequest.getEmail());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userRequest.getEmail(),
+                            userRequest.getPassword()
+                    )
+            );
+            if(authentication.isAuthenticated()) {
+                return jwtService.generateToken(userRequest.getEmail());
+            }
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            return null;
         }
         return null;
     }

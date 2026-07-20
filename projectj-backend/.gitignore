@@ -34,3 +34,13 @@ build/
 
 ### Application Properties ###
 application.properties
+
+### Custom Security Exclusions ###
+**/node_modules/
+**/dist/
+**/.env
+**/*.env
+**/application.properties
+**/application-*.properties
+**/application*.yml
+**/application*.yaml
